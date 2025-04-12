@@ -34,7 +34,7 @@ proxy-providers:
       enable: true   # 开启健康检查
       interval: 600  # 每**分钟检查一次，单位秒
       url: "https://connect.rom.miui.com/generate_204"  # 测速URL
-      timeout: 800  # 超过此时间的节点将被剔除
+      timeout: 1000  # 超过此时间的节点将被剔除
       max-failures: 2  # 连续N次失败后移除节点
       filter: "avg-rtt<600 && loss<0.5"  #迟延小于**毫秒且丢包率小于**的节点才存活
       expected-status: 204
@@ -241,16 +241,16 @@ rules:
   
   
   # 广告\隐私
-  - DOMAIN-KEYWORD,js96110,⛔ 广告拦截               # 以权谋私，一边反诈一边推广，恶意封禁正常网站
-  - DOMAIN,e.crashlytics.com,⛔ 广告拦截             # 拒绝一切崩溃数据统计、搜集。
-  - RULE-SET,adblock_domain,⛔ 广告拦截
-  - RULE-SET,adblock_class,⛔ 广告拦截
-  - RULE-SET,adblock_ip,⛔ 广告拦截,no-resolve
   - GEOSITE,WIN-SPY,REJECT                           # WIN-SPY 和 WIN-EXTRA 是 Windows 的附加的隐私跟踪域名
   - GEOSITE,WIN-EXTRA,REJECT
   - DOMAIN-SUFFIX,telemetry.microsoft.com,REJECT     # 拦截微软遥测
   - DOMAIN-SUFFIX,doubleclick.net,REJECT             # Google广告
   - DOMAIN-REGEX,(?i)(track|analytics),REJECT        # 拦截包含 ad/track/analytics 恶意特征的域名
+  - DOMAIN-KEYWORD,js96110,⛔ 广告拦截               # 以权谋私，一边反诈一边推广，恶意封禁正常网站
+  - DOMAIN,e.crashlytics.com,⛔ 广告拦截             # 拒绝一切崩溃数据统计、搜集。
+  - RULE-SET,adblock_domain,⛔ 广告拦截
+  - RULE-SET,adblock_class,⛔ 广告拦截
+  - RULE-SET,adblock_ip,⛔ 广告拦截,no-resolve
     
   # 优先代理
   - RULE-SET,proxylite,🚀 默认代理
