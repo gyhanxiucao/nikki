@@ -225,6 +225,7 @@ proxy-groups:
     interval: 300
     lazy: true
     exclude-filter: "🇭🇰|港|Hong|🇹🇼|台|TW|Taiwan|🇸🇬|新|SG|Singapore|狮城|🇺🇸|美|US|U.S.|United|America|🇯🇵|日|JP|japan|🇰🇷|韩|KR|Korea|🇷🇺|俄|RU|Russia|🇩🇪|德|DE|Germany|🇫🇷|法|FR|France|🇬🇧|英|GB|UK|England|Great|Kingdom"
+  - {name: 🌐 中转节点, type: select, use: [SSRDOG, NoMoreWalls], filter: '->|转'}
   - {name: 🌐 突破锁区, type: select, proxies: [DIRECT, 🚀 默认代理, 🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇷🇺 俄罗斯, 🇩🇪 德国, 🇫🇷 法国, 🇬🇧 英国, 🌍 其他地区]}
 
 
