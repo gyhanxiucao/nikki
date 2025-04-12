@@ -239,7 +239,6 @@ rules:
   - DOMAIN-REGEX,outlook.office.*.com,DIRECT         # 补救被下面WIN-SPY 和 WIN-EXTRA规则误杀的情形
   - DOMAIN-SUFFIX,login.microsoftonline.com,DIRECT   # 同上条
   
-  
   # 广告\隐私
   - GEOSITE,WIN-SPY,REJECT                           # WIN-SPY 和 WIN-EXTRA 是 Windows 的附加的隐私跟踪域名
   - GEOSITE,WIN-EXTRA,REJECT
