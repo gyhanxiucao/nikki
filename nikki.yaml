@@ -27,7 +27,7 @@ proxy-providers:
     url: "https://gh-proxy.com/https://raw.githubusercontent.com/peasoft/NoMoreWalls/refs/heads/master/snippets/nodes.meta.yml"  # 替换成你的订阅地址
     interval: 43200  # 更新间隔时间，单位秒，86400为24小时
     path: ./profiles/MoreWalls.yaml  # 本地缓存路径
-    filter: '^(?!.*(@|1x|Hysteria|\b[0-3]\.[0-9]MB\/s\b|_speednode_00[0-5]\d|_(CN|US|JP|CH|GB)_speednode|🌀)).*$'  # 节点过滤
+    filter: '^(?!.*(@|1x|Hysteria|\b[0-3]\.[0-9]MB\/s\b|_speednode_00[0-5]\d|_(CN|US|JP|CH|GB)_speednode|🌀|🇨🇳|中国|移动|电信|联通|广东|深圳|浙江|上海|CN|China|CHN)).*$'  # 节点过滤
     header:      # 健康检查
       User-Agent: ["Clash.Meta"]
     health-check:
@@ -180,11 +180,11 @@ dns:
   # COMPATIBLE-兼容，在策略组筛选不出节点时出现，等效 DIRECT
   
 # 注意锚点必须放在引用的上方，可以集中把锚点全部放yaml的顶部。
-pr: &pr {type: select, proxies: [🚀 默认代理, DIRECT, 🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇷🇺 俄罗斯, 🇩🇪 德国, 🇫🇷 法国, 🇬🇧 英国, 🇨🇳 中国, 🌍 其他地区]}
+pr: &pr {type: select, proxies: [🚀 默认代理, DIRECT, 🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇷🇺 俄罗斯, 🇩🇪 德国, 🇫🇷 法国, 🇬🇧 英国, 🌍 其他地区]}
 proxy-groups:
   # 基础组
-  - {name: 🚀 默认代理, type: select, proxies: [🔯 故障转移, ♻️ 迟延最低, 🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇷🇺 俄罗斯, 🇩🇪 德国, 🇫🇷 法国, 🇬🇧 英国, 🇨🇳 中国, 🌍 其他地区]}
-  - {name: 🐟 漏网之鱼, type: select, proxies: [🚀 默认代理, DIRECT, 🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇷🇺 俄罗斯, 🇩🇪 德国, 🇫🇷 法国, 🇬🇧 英国, 🇨🇳 中国, 🌍 其他地区]}
+  - {name: 🚀 默认代理, type: select, proxies: [🔯 故障转移, ♻️ 迟延最低, 🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇷🇺 俄罗斯, 🇩🇪 德国, 🇫🇷 法国, 🇬🇧 英国, 🌍 其他地区]}
+  - {name: 🐟 漏网之鱼, type: select, proxies: [🚀 默认代理, DIRECT, 🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇷🇺 俄罗斯, 🇩🇪 德国, 🇫🇷 法国, 🇬🇧 英国, 🌍 其他地区]}
   - {name: 🔯 故障转移, type: fallback, url: "https://connectivitycheck.gstatic.com/generate_204", interval: 300, tolerance: 100, timeout: 800, use: [SSRDOG, NoMoreWalls], lazy: false, filter: "^(?!(维护|下线|测试|过期)).*$", max-failures: 2, failover-delay: 10}
   - {name: ♻️ 迟延最低, type: url-test, url: "https://connectivitycheck.gstatic.com/generate_204", interval: 600, tolerance: 50, timeout: 600, use: [SSRDOG, NoMoreWalls], lazy: false, filter: "^(?!(直连|过期|维护|测试)).*$", disable-udp: false}
   - {name: 🚨 病毒网站, type: select, proxies: [REJECT, DIRECT]}
@@ -193,7 +193,7 @@ proxy-groups:
   # 服务组
   - {name: 🍀 Openwrt, type: select, proxies: [DIRECT, 🚀 默认代理]}
   - {name: ✈️ Speedtest, type: select, proxies: [DIRECT, 🚀 默认代理]}
-  - {name: 🍎 Apple, type: select, proxies: [DIRECT, 🚀 默认代理, 🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇷🇺 俄罗斯, 🇩🇪 德国, 🇫🇷 法国, 🇬🇧 英国, 🇨🇳 中国, 🌍 其他地区]}
+  - {name: 🍎 Apple, type: select, proxies: [DIRECT, 🚀 默认代理, 🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇷🇺 俄罗斯, 🇩🇪 德国, 🇫🇷 法国, 🇬🇧 英国, 🌍 其他地区]}
   - {name: 🤖 AI, type: select, proxies: [🇺🇸 美国, 🇸🇬 新加坡, 🇯🇵 日本, 🇰🇷 韩国, 🇩🇪 德国, 🇫🇷 法国, 🇬🇧 英国, 🌍 其他地区]}
   - {name: 🪟 Microsoft, <<: *pr}
   - {name: 🪟 MS Update, type: select, proxies: [REJECT, DIRECT, 🚀 默认代理]}
@@ -217,7 +217,6 @@ proxy-groups:
   # - {name: 🇨🇦 加拿大, type: url-test, url: "https://connectivitycheck.gstatic.com/generate_204", use: [SSRDOG, NoMoreWalls], tolerance: 50, interval: 300, lazy: true, filter: '🇨🇦|加|CA|Canada'}
   - {name: 🇫🇷 法国, type: url-test, url: "https://connectivitycheck.gstatic.com/generate_204", use: [SSRDOG, NoMoreWalls], tolerance: 50, interval: 300, lazy: true, filter: '🇫🇷|法|FR|France'}
   - {name: 🇬🇧 英国, type: url-test, url: "https://connectivitycheck.gstatic.com/generate_204", use: [SSRDOG, NoMoreWalls], tolerance: 50, interval: 300, lazy: true, filter: '🇬🇧|英|GB|UK|England|Great|Kingdom'}
-  - {name: 🇨🇳 中国, type: url-test, url: "https://connectivitycheck.gstatic.com/generate_204", use: [SSRDOG, NoMoreWalls], tolerance: 50, interval: 300, lazy: true, filter: '(?=.*(🇨🇳|中国|移动|电信|联通|广东|深圳|浙江|上海|CN|China|CHN))^(?!.*(台|港|澳|Taiwan|TW|HK|Hong\s*Kong|Macao|Macau|MO)).*$'}
   - name: 🌍 其他地区
     type: url-test
     url: "https://connectivitycheck.gstatic.com/generate_204"
@@ -225,8 +224,8 @@ proxy-groups:
     tolerance: 50
     interval: 300
     lazy: true
-    exclude-filter: "🇭🇰|港|Hong|🇹🇼|台|TW|Taiwan|🇸🇬|新|SG|Singapore|狮城|🇺🇸|美|US|U.S.|United|America|🇯🇵|日|JP|japan|🇰🇷|韩|KR|Korea|🇷🇺|俄|RU|Russia|🇩🇪|德|DE|Germany|🇫🇷|法|FR|France|🇬🇧|英|GB|UK|England|Great|Kingdom|🇨🇳|中|China|CHN"
-  - {name: 🌐 突破锁区, type: select, proxies: [DIRECT, 🚀 默认代理, 🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇷🇺 俄罗斯, 🇩🇪 德国, 🇫🇷 法国, 🇬🇧 英国, 🇨🇳 中国, 🌍 其他地区]}
+    exclude-filter: "🇭🇰|港|Hong|🇹🇼|台|TW|Taiwan|🇸🇬|新|SG|Singapore|狮城|🇺🇸|美|US|U.S.|United|America|🇯🇵|日|JP|japan|🇰🇷|韩|KR|Korea|🇷🇺|俄|RU|Russia|🇩🇪|德|DE|Germany|🇫🇷|法|FR|France|🇬🇧|英|GB|UK|England|Great|Kingdom"
+  - {name: 🌐 突破锁区, type: select, proxies: [DIRECT, 🚀 默认代理, 🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇷🇺 俄罗斯, 🇩🇪 德国, 🇫🇷 法国, 🇬🇧 英国, 🌍 其他地区]}
 
 
 # 规则匹配
