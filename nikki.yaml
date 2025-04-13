@@ -253,17 +253,14 @@ proxy-groups:
     # no-resolve  跳过 dns 解析
     # src         仅支持关于 目标IP 的规则，将 目标IP 匹配转为 来源IP 匹配
   
-rules:     
-    
+rules:      
   # 病毒网站
   - RULE-SET,virus_website,🚨 病毒网站
   
-  # 例外\优先
+  # 拦截例外
   - DOMAIN-REGEX,outlook.office.*.com,DIRECT         # 补救被下面WIN-SPY 和 WIN-EXTRA规则误杀的情形
   - DOMAIN-SUFFIX,login.microsoftonline.com,DIRECT   # 同上条
-  - DOMAIN-SUFFIX,sourceforge.net,DIRECT
-  - RULE-SET,openwrt,🍀 Openwrt
-  
+ 
   # 广告\隐私
   - GEOSITE,WIN-SPY,REJECT                           # WIN-SPY 和 WIN-EXTRA 是 Windows 的附加的隐私跟踪域名
   - GEOSITE,WIN-EXTRA,REJECT
@@ -276,7 +273,9 @@ rules:
   - RULE-SET,adblock_class,⛔ 广告拦截
   - RULE-SET,adblock_ip,⛔ 广告拦截,no-resolve
     
-  # 优先代理
+  # 优先
+  - DOMAIN-SUFFIX,sourceforge.net,DIRECT
+  - RULE-SET,openwrt,🍀 Openwrt
   - RULE-SET,proxylite,🚀 默认代理
   
   # 国内直连
@@ -298,9 +297,9 @@ rules:
   - RULE-SET,telegram_domain,📲 Telegram
   - RULE-SET,netflix_domain,🎥 NETFLIX
   - RULE-SET,paypal_domain,💶 PayPal
-    
-  # 代理兜底
   - RULE-SET,region,🌐 突破锁区
+  
+  # 代理兜底
   - RULE-SET,gfw_domain,🚀 默认代理
   - RULE-SET,geolocation-!cn,🚀 默认代理
     
