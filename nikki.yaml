@@ -262,6 +262,7 @@ rules:
   - DOMAIN-REGEX,outlook.office.*.com,DIRECT         # 补救被下面WIN-SPY 和 WIN-EXTRA规则误杀的情形
   - DOMAIN-SUFFIX,login.microsoftonline.com,DIRECT   # 同上条
   - DOMAIN-SUFFIX,sourceforge.net,DIRECT
+  - RULE-SET,openwrt,🍀 Openwrt
   
   # 广告\隐私
   - GEOSITE,WIN-SPY,REJECT                           # WIN-SPY 和 WIN-EXTRA 是 Windows 的附加的隐私跟踪域名
@@ -284,7 +285,6 @@ rules:
   - RULE-SET,cn_domain,DIRECT 
     
   # 常用服务
-  - RULE-SET,openwrt,🍀 Openwrt
   - RULE-SET,apple_domain,🍎 Apple
   - RULE-SET,ai,🤖 AI
   - RULE-SET,github_domain,👨🏿‍💻 GitHub
