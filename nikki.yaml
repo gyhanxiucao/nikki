@@ -305,8 +305,7 @@ rules:
   - RULE-SET,google_ip,🍀 Google,no-resolve
   - RULE-SET,netflix_ip,🎥 NETFLIX,no-resolve
   - RULE-SET,telegram_ip,📲 Telegram,no-resolve
-  - RULE-SET,cn_ip,DIRECT,no-resolve
-  - GEOIP,CN,DIRECT       # 国内IP兜底
+  - RULE-SET,cn_ip,DIRECT
 
   # 终极兜底
   - MATCH,🐟 漏网之鱼
