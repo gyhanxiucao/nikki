@@ -1,0 +1,363 @@
+
+# 订阅锚点
+providers-anchor:
+  p: &p {type: http, interval: 43200, health-check: {enable: true, lazy: false, url: "https://www.gstatic.com/generate_204", interval: 600, timeout: 800, max-failures: 4, persistent: false, filter: "avg-rtt<800 && loss<1.0"}}
+     # timeout: 800                                 超过此时间的节点将被剔除
+     # max-failures: 4,                             最大失败次数，默认5,连续N次失败后节点被标记为不可用
+     # persistent: false,                           不保留失败节点，为true时，节点仍保留在列表中
+     # failover-delay: 60                           **秒后重试，在persistent: true 时生效
+     # filter: "avg-rtt<600 && loss<1.0"            #迟延小于**毫秒且丢包率小于**的节点才存活
+     # lazy: false                                  # 立即检查而不等待首次使用，默认为true,不使用该集合节点时，不进行测试
+
+# 订阅
+proxy-providers:
+  SSRDOG:  # 订阅名称
+    <<: *p
+    url: "https://no3-svip.urlapi-dodo.cyou/s?t=69bfbbdb19ee1929c4d9f47bcb403b39"   # 订阅地址
+    path: ./profiles/SSRDOG.yaml                   # 本地缓存路径
+    filter: '^(?!.*(GB|Traffic|Expire)).*$'
+    header:
+      User-Agent: ["Clash.Meta"]
+    proxy: DIRECT                                  # 使用直连进行下载/更新（避免代理循环）
+  
+  NoMoreWalls:  # 订阅名称
+    <<: *p
+    url: "https://gh-proxy.com/https://raw.githubusercontent.com/peasoft/NoMoreWalls/refs/heads/master/snippets/nodes.meta.yml"  # 订阅地址
+    path: ./profiles/MoreWalls.yaml                # 本地缓存路径
+    filter: '^(?!.*(@|1x|Hysteria|\b[0-3]\.[0-9]MB\/s\b|🇨🇳|中国|移动|电信|联通|广东|深圳|浙江|上海|CN|China|CHN)).*$'  # 节点过滤
+    header:                                        # 
+      User-Agent: ["Clash.Meta"]
+    proxy: DIRECT                                  # 使用直连进行下载/更新（避免代理循环）
+
+
+proxies:
+  - {name: "直连", type: direct, udp: true}
+  - {name: "拒绝", type: reject}
+  # - {name: "抛弃", type: reject-drop}
+    
+    
+# 全局配置 
+port: 7890
+socks-port: 7891
+redir-port: 7892
+mixed-port: 7893
+tproxy-port: 7894
+allow-lan: true
+bind-address: "*"
+ipv6: false
+tcp-concurrent: true
+unified-delay: true      # 统一延迟
+log-level: warning
+find-process-mode: 'off'
+# interface-name: en0
+global-client-fingerprint: chrome
+keep-alive-idle: 600
+keep-alive-interval: 15
+disable-keep-alive: false
+profile:  # 缓存
+  store-selected: true  # 储存 API 对策略组的选择，以供下次启动时使用
+  store-fake-ip: true   # 储存 fakeip 映射表，域名再次发生连接时，使用原有映射地址
+global-ua: clash.meta   # 外部资源下载时使用的的 UA，默认为 clash.meta
+
+# 控制面板
+external-controller: 0.0.0.0:9090
+secret: ""
+external-ui: "/etc/nikki/run/ui"
+external-ui-name: zashboard
+external-ui-url: "https://gh-proxy.com/https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages.zip"
+
+# GEO 数据
+geodata-mode: false       #geoip 使用文件，mmdb 或者 dat，可选 true/false,true为 dat，此项有默认值 false
+geodata-loader: standard  # 加载模式:standard-标准加载器,memconservative-专为内存受限 (小内存) 设备优化的加载器 (默认值)
+geo-auto-update: true     # 自动更新
+geo-update-interval: 24   # 自动更新间隔时间，单位小时
+geox-url:
+  geoip: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.dat"
+  geosite: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat"
+  mmdb: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country.mmdb"
+  asn: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb"
+
+# 入站  
+tun:
+  enable: true
+  stack: mixed    # 可选：system/gvisor/mixed
+  dns-hijack: ["any:53", "tcp://any:53"]
+  auto-route: true
+  auto-redirect: true
+  auto-detect-interface: true
+
+
+# DNS模块
+dns:
+  enable: true
+  listen: '[::]:1053'  # 同时处理IPv6和IPv4
+  ipv6: true
+  respect-rules: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter-mode: blacklist
+  fake-ip-filter:
+    - "*.lan"
+    - "+.local"
+    - "::1/128"
+    - "fe80::/10"
+    - "rule-set:private_domain,cn_domain"
+    - "+.gstatic.com"
+    - "+.googleapis.com"
+    - "+.services.googleapis.cn"
+    - "+.xn--ngstr-lra8j.com"
+    - "time.*.com"
+    - "+.pool.ntp.org"
+    - "+.ntp.ntsc.ac.cn"
+    - "+.cn.ntp.org.cn"
+    - "+.openapi.alipan.com"
+    - "+.aliyundrive.com"
+    - "+.drive.quark.cn"
+    - "+.pan.baidu.com"
+    - "+.cloud.189.cn"
+    - "+.pc.woozooo.com"
+    - "+.mi.com"
+    - "+.xiaomi.com"
+    - "+.qq.com"
+    - "+.1panel.live"
+    - "+.rat.dev"
+    - "+.anye.in"
+    - "+.1panelproxy.com"
+    - "+.1panel.top"
+    - "+.1ms.run"
+    - "+.13140521.xyz"
+  
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+    - 2400:3200::1
+  
+  proxy-server-nameserver:
+    - https://dns.alidns.com/dns-query
+    - 223.5.5.5  
+  direct-nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+  
+  direct-nameserver-follow-policy: true # 是否遵循nameserver-policy，默认为不遵守，仅当direct-nameserver不为空时生效
+  
+  nameserver-policy:
+    '+.alipan.com,+.aliyundrive.com,+.drive.quark.cn,+.189.cn,+.pc.woozooo.com': 
+      - https://dns.alidns.com/dns-query
+      - https://doh.pub/dns-query
+    "ip6.arpa,ipv6.microsoft.com,ipv6.google.com":
+      - tls://[2606:4700:4700::1111]:853
+    "geosite:cn,private":
+      - https://dns.alidns.com/dns-query
+      - https://doh.pub/dns-query
+    "geosite:geolocation-!cn":
+      - tls://1.1.1.1:853               # 将IPv4放在前面
+      - tls://8.8.8.8:853
+      - tls://2606:4700:4700::1111@853  # IPv6备用
+      - tls://2001:4860:4860::8888@853
+    "geosite:category-ads-all": rcode://success
+    "geosite:google,youtube,facebook,twitter,Telegram,TikTok,netflix,disney":
+      - tls://1.1.1.1:853
+      - tls://[2606:4700:4700::64]:853  # Cloudflare Netflix专用
+
+  nameserver:
+    - https://dns.alidns.com/dns-query  # 默认国内
+    - tls://1.1.1.1:853                 # 境外备用
+
+  fallback:  # 后备域名解析服务器，一般情况下使用境外 DNS, 保证结果可信
+    - tcp://1.0.0.1:53
+    - tcp://[2606:4700:4700::1001]:53     # Cloudflare IPv6
+    - tcp://8.8.4.4:53
+  fallback-filter:
+    geoip: true         # 是否启用 geoip 判断
+    geoip-code: CN      # 除了 geoip-code 配置的国家 IP, 其他的 IP 结果会被视为污染
+                        # geoip-code 配置的国家的结果会直接采用，否则将采用 fallback结果
+    geosite:            # geosite 列表的内容被视为已污染，匹配到 geosite 的域名，将只使用 fallback解析，不去使用 nameserver
+                        # 可选值为对于的 geosite 内包含的集合
+      - gfw
+    ipcidr:             # IP/掩码，可自定义IP段，这些网段的结果会被视为污染，nameserver解析出这些结果时将会采用 fallback的解析结果
+      - 0.0.0.0/32      # 屏蔽无效的IPV4（全零地址）
+      - ::/128          # 屏蔽无效的IPv6（全零地址）
+      #- ::/0           # 会强制所有 IPv6 查询走 fallback，可能增加延迟。仅在 IPv6 污染严重时启用。
+    domain:             # 这些域名被视为已污染，匹配到这些域名，会直接使用 fallback解析，不去使用 nameserver
+      - '+.google.com'
+      - '+.facebook.com'
+      - '+.youtube.com'
+ 
+
+# 出站策略
+
+  # 内置代理策略：
+    # DIRECT-直连
+    # REJECT-拒绝
+    # REJECT-DROP-抛弃
+    # PASS-绕过，匹配规则时跳过此规则
+    # COMPATIBLE-兼容，在策略组筛选不出节点时出现，等效 DIRECT
+  
+# 代理组
+proxy--anchor:
+  pr: &pr {type: select, proxies: [🚀 默认代理, 🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇩🇪 德国, 🇷🇺 俄罗斯, 🌍 其他地区, 直连]}
+  pr1: &pr1 {type: select, proxies: [直连, 🚀 默认代理, 🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇩🇪 德国, 🇷🇺 俄罗斯, 🌍 其他地区]}
+  AI: &AI {type: select, proxies: [🇺🇸 美国, 🇸🇬 新加坡, 🇯🇵 日本, 🇰🇷 韩国, 🇩🇪 德国, 🌍 其他地区]}
+  pt: &pt {type: url-test, use: [SSRDOG, NoMoreWalls], interval: 600, tolerance: 50}
+  pb: &pb {type: url-test, use: [SSRDOG, NoMoreWalls], interval: 300, tolerance: 50}
+
+proxy-groups:
+  # 基础组
+  - {name: 🚀 默认代理, type: select, proxies: [🔯 故障转移, ♻️ 迟延最低, 🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇩🇪 德国, 🇷🇺 俄罗斯, 🌍 其他地区]}
+  - {name: 🐟 漏网之鱼, <<: *pr}
+  - {name: 🔯 故障转移, <<: *pb, filter: "^(?!(维护|下线|测试|过期)).*$"}
+  - {name: ♻️ 迟延最低, <<: *pt, filter: "^(?!(直连|过期|维护|测试)).*$"}
+  - {name: 🚨 病毒网站, type: select, proxies: [拒绝, 直连]}
+  - {name: ⛔ 广告拦截, type: select, proxies: [REJECT-DROP, 拒绝, 🚀 默认代理]}
+    
+  # 服务组
+  - {name: Microsoft, type: select, proxies: [🚀 默认代理, 直连], icon: "http://192.168.100.1:8282/icons/large/Microsoft.png"}
+  - {name: MS Update, type: select, proxies: [拒绝, 🚀 默认代理, 直连], icon: "http://192.168.100.1:8282/icons/large/Microsoft.png"}
+  - {name: 🍀 Openwrt, <<: *pr1}
+  - {name: Speedtest, <<: *pr1, icon: "http://192.168.100.1:8282/icons/large/SpeedTest.png"}
+  - {name: Apple, <<: *pr1, icon: "http://192.168.100.1:8282/icons/large/Apple_rainbow.png"}
+  - {name: AI, <<: *AI, icon: "http://192.168.100.1:8282/icons/large/ChatGPT.png"}
+  - {name: Google, <<: *pr, icon: "http://192.168.100.1:8282/icons/large/Google.png"}
+  - {name: YouTube, <<: *pr, icon: "http://192.168.100.1:8282/icons/large/YouTube.png"}
+  - {name: GitHub, <<: *pr, icon: "http://192.168.100.1:8282/icons/large/GitHub.png"}
+  - {name: TikTok, <<: *pr, icon: "http://192.168.100.1:8282/icons/large/TikTok.png"}
+  - {name: 哔哩哔哩, <<: *pr, icon: "http://192.168.100.1:8282/icons/large/Bilibili_Global.png"}
+  - {name: Telegram, <<: *pr, icon: "http://192.168.100.1:8282/icons/large/Telegram.png"}
+  - {name: PayPal, <<: *pr, icon: "http://192.168.100.1:8282/icons/large/PayPal.png"}
+  - {name: NETFLIX, <<: *pr, icon: "http://192.168.100.1:8282/icons/large/Netflix.png"}
+  # - {name: NETFLIX, <<: *pr, icon: "https://gh-proxy.com/https://raw.githubusercontent.com/Vbaethon/HOMOMIX/main/Icon/Color/Large/Netflix.png"}
+
+  # 地区组
+  - {name: 🇭🇰 香港, <<: *pt, filter: '(?i)🇭🇰|港|HK|Hong\s*Kong'}
+  - {name: 🇹🇼 台湾, <<: *pt, filter: '(?i)🇹🇼|台|TW|Taiwan'}
+  - {name: 🇸🇬 新加坡, <<: *pt, filter: '(?i)🇸🇬|新|狮城|SG|Singapore'}
+  - {name: 🇺🇸 美国, <<: *pt, filter: '(?i)🇺🇸|美|US|U.S.|United States|America'}
+  - {name: 🇯🇵 日本, <<: *pt, filter: '(?i)🇯🇵|日|JP|japan'}
+  - {name: 🇰🇷 韩国, <<: *pt, filter: '(?i)🇰🇷|韩|KR|Korea'}
+  - {name: 🇩🇪 德国, <<: *pt, filter: '(?i)^(?=.*(🇩🇪|德|DE|Germany))(?!.*(?<!DE)_speednode).*$'}
+  - {name: 🇷🇺 俄罗斯, <<: *pt, filter: '(?i)🇷🇺|俄|RU|Russia'}
+  - name: 🌍 其他地区
+    <<: *pt
+    lazy: false
+    exclude-filter: "(?i)🇭🇰|港|Hong|🇹🇼|台|TW|Taiwan|🇸🇬|新|SG|Singapore|狮城|🇺🇸|美|US|U.S.|United|America|🇯🇵|日|JP|japan|🇰🇷|韩|KR|Korea|🇷🇺|俄|RU|Russia|🇩🇪|德|DE|Germany"
+  - {name: 🌐 中转节点, type: select, use: [SSRDOG, NoMoreWalls], filter: '->|转'}
+
+  
+# 规则匹配
+  ## 规则说明：
+  # DOMAIN               匹配完整域名
+  # DOMAIN-SUFFIX        匹配域名后缀
+  # DOMAIN-KEYWORD       域名关键字匹配
+  # DOMAIN-REGEX         域名正则表达式匹配
+  # GEOSITE              匹配GEOSITE内的域名
+  # IP-CIDR & IP-CIDR6   匹配 IP 地址范围，IP-CIDR和IP-CIDR6效果是一样的，IP-CIDR6只是一个别名
+  # IP-SUFFIX            匹配 IP 后缀范围
+  # IP-ASN               匹配 IP 所属 ASN
+  # GEOIP                匹配 IP 所属国家代码
+  # SRC-GEOIP            匹配来源 IP 所属国家代码
+  # SRC-IP-ASN           匹配来源 IP 所属 ASN
+  # SRC-IP-CIDR          匹配来源 IP 地址范围
+  # SRC-IP-SUFFIX        匹配来源 IP 后缀范围
+  # DST-PORT             匹配请求目标端口范围
+  # SRC-PORT             匹配请求来源端口范围
+  # PROCESS-NAME         使用进程匹配，在Android平台可以匹配包名
+  # RULE-SET             引用规则集合，需配置rule-providers
+  # SUB-RULE             匹配至子规则,需要注意括号的使用
+  # MATCH                匹配所有请求，无需条件
+  # 附件参数：
+    # no-resolve  跳过 dns 解析
+    # src         仅支持关于 目标IP 的规则，将 目标IP 匹配转为 来源IP 匹配
+  
+rules:      
+  # 病毒网站
+  - RULE-SET,virus_website,🚨 病毒网站
+  
+  # 拦截例外
+  - DOMAIN-REGEX,outlook.office.*.com,DIRECT         # 补救被下面WIN-SPY 和 WIN-EXTRA规则误杀的情形
+  - DOMAIN-SUFFIX,login.microsoftonline.com,DIRECT   # 同上条
+ 
+  # 广告\隐私
+  - GEOSITE,WIN-SPY,拒绝                             # WIN-SPY 和 WIN-EXTRA 是 Windows 的附加的隐私跟踪域名
+  - GEOSITE,WIN-EXTRA,拒绝
+  - DOMAIN-SUFFIX,telemetry.microsoft.com,拒绝       # 拦截微软遥测
+  - DOMAIN-SUFFIX,doubleclick.net,拒绝               # Google广告
+  - DOMAIN-REGEX,(?i)(track|analytics),拒绝          # 拦截包含 ad/track/analytics 恶意特征的域名
+  - DOMAIN-KEYWORD,js96110,⛔ 广告拦截               # 以权谋私，一边反诈一边推广，恶意封禁正常网站
+  - DOMAIN,e.crashlytics.com,⛔ 广告拦截             # 拒绝一切崩溃数据统计、搜集。
+  - RULE-SET,adblock_domain,⛔ 广告拦截
+  - RULE-SET,adblock_class,⛔ 广告拦截
+  - RULE-SET,adblock_ip,⛔ 广告拦截,no-resolve
+   
+  # 优先直连/代理
+  - DOMAIN-SUFFIX,sourceforge.net,直连
+  - RULE-SET,openwrt,🍀 Openwrt
+  - RULE-SET,directlite,直连
+  - RULE-SET,private_domain,直连
+  - RULE-SET,proxylite,🚀 默认代理
+    
+  # 常用服务
+  - RULE-SET,apple_domain,Apple
+  - RULE-SET,ai,AI
+  - RULE-SET,github_domain,GitHub
+  - RULE-SET,youtube_domain,YouTube
+  - RULE-SET,google_domain,Google
+  - GEOSITE,WIN-UPDATE,MS Update                   # WIN-UPDATE 是 Windows 的自动更新域名
+  - RULE-SET,onedrive_domain,Microsoft
+  - RULE-SET,microsoft_domain,Microsoft
+  - RULE-SET,tiktok_domain,TikTok
+  - RULE-SET,speedtest_domain,Speedtest
+  - RULE-SET,telegram_domain,Telegram
+  - RULE-SET,netflix_domain,NETFLIX
+  - RULE-SET,paypal_domain,PayPal
+  
+  # 兜底
+  - RULE-SET,gfw_domain,🚀 默认代理
+  - RULE-SET,geolocation-!cn,🚀 默认代理
+  - RULE-SET,cn_domain,直连
+    
+  # IP规则
+  - RULE-SET,google_ip,Google,no-resolve
+  - RULE-SET,netflix_ip,NETFLIX,no-resolve
+  - RULE-SET,telegram_ip,Telegram,no-resolve
+  - RULE-SET,cn_ip,直连
+
+  # 终极兜底
+  - MATCH,🐟 漏网之鱼
+
+# 规则集
+rule-anchor:
+  ip: &ip {type: http, interval: 86400, behavior: ipcidr, format: mrs}
+  domain: &domain {type: http, interval: 86400, behavior: domain, format: mrs}
+  class: &class {type: http, interval: 86400, behavior: classical, format: text}
+  classical: &classical {type: http, interval: 86400, behavior: classical, format: yaml}
+rule-providers: 
+  private_domain: { <<: *domain, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"}
+  proxylite: { <<: *class, url: "https://gh-proxy.com/https://raw.githubusercontent.com/gyhanxiucao/nikki/refs/heads/main/ProxyLite.list"}
+  directlite: { <<: *class, url: "https://gh-proxy.com/https://raw.githubusercontent.com/gyhanxiucao/nikki/refs/heads/main/Direct.list"}
+  virus_website: { <<: *class, url: "https://gh-proxy.com/https://raw.githubusercontent.com/gyhanxiucao/nikki/refs/heads/main/Virus_Website.list"}
+  adblock_domain: {  <<: *domain, url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ads-all.mrs"}
+  adblock_class: { <<: *classical, url: "https://gh-proxy.com/https://raw.githubusercontent.com/peasoft/NoMoreWalls/refs/heads/master/snippets/adblock.yml"}
+  # region: { <<: *classical, url: "https://gh-proxy.com/https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/snippets/region.yml"}
+  ai: { <<: *domain, url: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-!cn.mrs"}
+  openwrt: { <<: *class, url: "https://gh-proxy.com/https://raw.githubusercontent.com/gyhanxiucao/nikki/refs/heads/main/openwrt.list"}
+  youtube_domain: { <<: *domain, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/youtube.mrs"}
+  google_domain: { <<: *domain, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google.mrs"}
+  github_domain: { <<: *domain, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/github.mrs"}
+  telegram_domain: { <<: *domain, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/telegram.mrs"}
+  netflix_domain: { <<: *domain, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/netflix.mrs"}
+  paypal_domain: { <<: *domain, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/paypal.mrs"}
+  onedrive_domain: { <<: *domain, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/onedrive.mrs"}
+  microsoft_domain: { <<: *domain, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs"}
+  apple_domain: { <<: *domain, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple-cn.mrs"}
+  speedtest_domain: { <<: *domain, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/ookla-speedtest.mrs"}
+  tiktok_domain: { <<: *domain, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tiktok.mrs"}
+  gfw_domain: { <<: *domain, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/gfw.mrs"}
+  geolocation-!cn: { <<: *domain, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.mrs"}
+  cn_domain: { <<: *domain, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs"}
+  
+  adblock_ip: { <<: *ip, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geoip/ad.mrs"}
+  cn_ip: { <<: *ip, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs"}
+  google_ip: { <<: *ip, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/google.mrs"}
+  telegram_ip: { <<: *ip, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/telegram.mrs"}
+  netflix_ip: { <<: *ip, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/netflix.mrs"}
