@@ -217,7 +217,7 @@ proxy-groups:
   - {name: 🍀 Openwrt, <<: *pr1}
   - {name: Speedtest, <<: *pr1, icon: "http://192.168.100.1/icons/Large/SpeedTest.png"}
   - {name: Apple, <<: *pr1, icon: "http://192.168.100.1/icons/Large/Apple_rainbow.png"}
-  - {name: AI, <<: *AI, icon: "http://192.168.100.1/icons/Large/icons/large/ChatGPT.png"}
+  - {name: AI, <<: *AI, icon: "http://192.168.100.1/icons/Large/ChatGPT.png"}
   - {name: Google, <<: *pr, icon: "http://192.168.100.1/icons/Large/Google.png"}
   - {name: YouTube, <<: *pr, icon: "http://192.168.100.1/icons/Large/YouTube.png"}
   - {name: GitHub, <<: *pr, icon: "http://192.168.100.1/icons/Large/GitHub.png"}
