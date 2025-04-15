@@ -10,3 +10,5 @@ payload:
 - DOMAIN-SUFFIX,update.microsoft.com,Microsoft
 - DOMAIN-SUFFIX,download.microsoft.com,Microsoft
 - DOMAIN-SUFFIX,*.dl.delivery.mp.microsoft.com,Microsoft
+- DOMAIN-REGEX,outlook.office.*.com,Microsoft                  # 补救被下面WIN-SPY 和 WIN-EXTRA规则误杀的情形
+- DOMAIN-SUFFIX,login.microsoftonline.com,Microsoft            # 补救被下面WIN-SPY 和 WIN-EXTRA规则误杀的情形
