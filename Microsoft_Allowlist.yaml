@@ -1,0 +1,12 @@
+payload:
+- DOMAIN-SUFFIX,translator.microsoft.com,Microsoft
+- DOMAIN-SUFFIX,www.bing.com,Microsoft
+- DOMAIN-SUFFIX,www.bing.com:443,Microsoft
+- DOMAIN-SUFFIX,speech.platform.bing.com,Microsoft
+- DOMAIN-SUFFIX,cognitiveservices.azure.com,Microsoft
+- DOMAIN-SUFFIX,cognitiveservices.microsofttranslator.com,Microsoft
+- DOMAIN-SUFFIX,cdn.cognitive.microsofttranslator.com,Microsoft
+- DOMAIN-SUFFIX,windowsupdate.microsoft.com,Microsoft
+- DOMAIN-SUFFIX,update.microsoft.com,Microsoft
+- DOMAIN-SUFFIX,download.microsoft.com,Microsoft
+- DOMAIN-SUFFIX,*.dl.delivery.mp.microsoft.com,Microsoft
