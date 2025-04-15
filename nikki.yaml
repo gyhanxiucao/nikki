@@ -221,7 +221,7 @@ proxy-groups:
   - {name: Google, <<: *pr, icon: "http://192.168.100.1/icons/Large/Google.png"}
   - {name: YouTube, <<: *pr, icon: "http://192.168.100.1/icons/Large/YouTube.png"}
   - {name: GitHub, <<: *pr, icon: "http://192.168.100.1/icons/Large/GitHub.png"}
-  - {name: TikTok, <<: *pr, icon: "http://192.168.100.1/icons/Large/icons/large/TikTok.png"}
+  - {name: TikTok, <<: *pr, icon: "http://192.168.100.1/icons/Large/TikTok.png"}
   - {name: 哔哩哔哩, <<: *pr, icon: "http://192.168.100.1/icons/Large/Bilibili_Global.png"}
   - {name: Telegram, <<: *pr, icon: "http://192.168.100.1/icons/Large/Telegram.png"}
   - {name: PayPal, <<: *pr, icon: "http://192.168.100.1/icons/Large/PayPal.png"}
