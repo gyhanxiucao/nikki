@@ -1,14 +1,14 @@
 payload:
-- DOMAIN-SUFFIX,translator.microsoft.com,Microsoft
-- DOMAIN-SUFFIX,www.bing.com,Microsoft
-- DOMAIN-SUFFIX,www.bing.com:443,Microsoft
-- DOMAIN-SUFFIX,speech.platform.bing.com,Microsoft
-- DOMAIN-SUFFIX,cognitiveservices.azure.com,Microsoft
-- DOMAIN-SUFFIX,cognitiveservices.microsofttranslator.com,Microsoft
-- DOMAIN-SUFFIX,cdn.cognitive.microsofttranslator.com,Microsoft
-- DOMAIN-SUFFIX,windowsupdate.microsoft.com,Microsoft
-- DOMAIN-SUFFIX,update.microsoft.com,Microsoft
-- DOMAIN-SUFFIX,download.microsoft.com,Microsoft
-- DOMAIN-SUFFIX,*.dl.delivery.mp.microsoft.com,Microsoft
-- DOMAIN-REGEX,outlook.office.*.com,Microsoft                  # 补救被下面WIN-SPY 和 WIN-EXTRA规则误杀的情形
-- DOMAIN-SUFFIX,login.microsoftonline.com,Microsoft            # 补救被下面WIN-SPY 和 WIN-EXTRA规则误杀的情形
+- DOMAIN-SUFFIX,translator.microsoft.com
+- DOMAIN-SUFFIX,www.bing.com
+- DOMAIN-SUFFIX,www.bing.com:443
+- DOMAIN-SUFFIX,speech.platform.bing.com
+- DOMAIN-SUFFIX,cognitiveservices.azure.com
+- DOMAIN-SUFFIX,cognitiveservices.microsofttranslator.com
+- DOMAIN-SUFFIX,cdn.cognitive.microsofttranslator.com
+- DOMAIN-SUFFIX,windowsupdate.microsoft.com
+- DOMAIN-SUFFIX,update.microsoft.com
+- DOMAIN-SUFFIX,download.microsoft.com
+- DOMAIN-SUFFIX,*.dl.delivery.mp.microsoft.com
+- DOMAIN-REGEX,outlook.office.*.com                  # 补救被下面WIN-SPY 和 WIN-EXTRA规则误杀的情形
+- DOMAIN-SUFFIX,login.microsoftonline.com           # 补救被下面WIN-SPY 和 WIN-EXTRA规则误杀的情形
