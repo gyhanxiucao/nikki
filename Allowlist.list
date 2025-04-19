@@ -3,7 +3,10 @@ DOMAIN-SUFFIX,translator.microsoft.com
 DOMAIN-SUFFIX,microsofttranslator.com
 DOMAIN-SUFFIX,download.microsoft.com
 DOMAIN-SUFFIX,*.dl.delivery.mp.microsoft.com
-DOMAIN,edge.microsoft.com                        # Edge浏览器翻译
-DOMAIN,login.live.com                            # 应用商店有关
-DOMAIN-REGEX,outlook.office.*.com                # 补救被下面WIN-SPY 和 WIN-EXTRA规则误杀的情形
-DOMAIN-SUFFIX,login.microsoftonline.com          # 补救被下面WIN-SPY 和 WIN-EXTRA规则
+DOMAIN,edge.microsoft.com                              # Edge浏览器翻译
+DOMAIN,login.live.com                                  # 应用商店有关
+DOMAIN-REGEX,outlook.office.*.com                      # 补救被下面WIN-SPY 和 WIN-EXTRA规则误杀的情形
+DOMAIN-SUFFIX,login.microsoftonline.com                # 补救被下面WIN-SPY 和 WIN-EXTRA规则
+DOMAIN,storeedgefd.dsx.mp.microsoft.comlogin.live.com
+DOMAIN,storeedgefd.dsx.mp.microsoft.com
+
