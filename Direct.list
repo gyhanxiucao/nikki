@@ -18,9 +18,11 @@ DOMAIN-SUFFIX,aliyundrive.com
 DOMAIN-SUFFIX,nn.ci
 DOMAIN-SUFFIX,xhofe.top
 DOMAIN-SUFFIX,drive.quark.cn
-DOMAIN-REGEX,outlook.office.*.com,DIRECT         # 补救被WIN-SPY 和 WIN-EXTRA规则误杀的情形，下一条同。
-DOMAIN-SUFFIX,login.microsoftonline.com,DIRECT
-DOMAIN-SUFFIX,sourceforge.net,DIRECT
+DOMAIN-REGEX,outlook.office.*.com         # 补救被WIN-SPY 和 WIN-EXTRA规则误杀的情形，下一条同。
+DOMAIN-SUFFIX,login.microsoftonline.com
+DOMAIN-SUFFIX,sourceforge.net
+DOMAIN-SUFFIX,testipv6.cn
+
 
 
 # 域名关键字匹配
