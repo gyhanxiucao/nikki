@@ -20,6 +20,7 @@ DOMAIN-SUFFIX,unlockapk.com
 DOMAIN-SUFFIX,pling.com
 DOMAIN-SUFFIX,cloudflareclient.com
 DOMAIN-SUFFIX,ipify.org
+DOMAIN-SUFFIX,cloudflare.com
 
 # 域名关键字匹配
 DOMAIN-KEYWORD,1e100
