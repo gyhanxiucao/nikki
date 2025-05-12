@@ -40,22 +40,31 @@ providers-anchor:
     health-check:
       enable: true
       url: "https://www.gstatic.com/generate_204"
+      #url: "https://cp.cloudflare.com/generate_204"
       interval: 300
-      timeout: 1200
+      timeout: 800
       #max-failures: 4
       lazy: false
       persistent: false
+      proxy: DIRECT
     header:
       User-Agent: ["Clash.Meta"]
     proxy: DIRECT      
                                             
 # 订阅
-proxy-providers:  
-  NoMoreWalls:  # 订阅名称
+proxy-providers:
+  1-SSRDOG:  # 订阅名称
+    <<: *pp
+    url: "https://no8-svip.urlapi-dodo.site/s?t=cfdcfa6e3d57842d1487abd1cd49d408"
+    path: ./proxy_providers/SSRDOG.yaml
+    exclude-filter: "GB|Date|Traffic"
+  
+  2-NoMoreWalls:  # 订阅名称
     <<: *pp
     url: "https://gh-proxy.com/https://raw.githubusercontent.com/peasoft/NoMoreWalls/refs/heads/master/snippets/nodes.meta.yml"
     path: ./proxy_providers/MoreWalls.yaml
-    filter: '^(?!.*(@|1x|Hysteria|\b[0-3]\.[0-9]MB\/s\b|🇨🇳|14|🌀|speednode|中国|移动|电信|联通|广东|深圳|浙江|上海|CN|China|CHN)).*$'
+    filter: '^(?!.*(@|Hysteria|openai|1x|\b[0-3]\.[0-9]MB\/s\b|🇨🇳|14|🌀|中国|移动|电信|联通|广东|深圳|浙江|上海|CN|China|CHN)).*$'
+    #filter: '^(?!.*(@|1x|Hysteria|\b[0-3]\.[0-9]MB\/s\b|_speednode_00[0-5]\d|_(CN|US|JP|CH|GB)_speednode|🌀|🇨🇳|中国|移动|电信|联通|广东|深圳|浙江|上海|CN|China|CHN)).*$'
 
 
 
@@ -128,14 +137,13 @@ dns:
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter-mode: blacklist
-  fake-ip-filter:
+  fake-ip-filter:      # 这个列表仅添加需要直连的域名
+                       # 对于被墙的等需要代理的域名，如googleapis.com添加后，谷歌应用商店等需要登录的应用将无法联网。
     - "*.lan"
     - "+.local"
     - "::1/128"
     - "fe80::/10"
-    - "rule-set:private,cn"
-    - "+.gstatic.com"
-    - "+.googleapis.com"
+    - "rule-set:private,directlite,cn"
     - "+.services.googleapis.cn"
     - "+.xn--ngstr-lra8j.com"
     - "time.*.com"
@@ -331,7 +339,8 @@ rules:
   # 拦截例外
   - DOMAIN-REGEX,outlook.office.*.com,直连                 # 补救被下面WIN-SPY 和 WIN-EXTRA规则误杀的情形
   - DOMAIN-SUFFIX,login.microsoftonline.com,直连           # 补救被下面WIN-SPY 和 WIN-EXTRA规则
-  - DOMAIN-KEYWORD,microsoft,直连
+  - DOMAIN-SUFFIX,edge.microsoft.com,直连
+  - DOMAIN-SUFFIX,login.live.com,直连
   - DOMAIN,time.windows.com,直连
 
   # 广告\隐私
@@ -348,6 +357,7 @@ rules:
    
   # 优先直连/代理
   - DOMAIN-SUFFIX,sourceforge.net,直连
+  - DOMAIN-SUFFIX,gh-proxy.com,直连
   - RULE-SET,openwrt,🍀 Openwrt
   - RULE-SET,directlite,直连
   - RULE-SET,private,直连
