@@ -331,7 +331,7 @@ rules:
   # 拦截例外
   - DOMAIN-REGEX,outlook.office.*.com,DIRECT                 # 补救被下面WIN-SPY 和 WIN-EXTRA规则误杀的情形
   - DOMAIN-SUFFIX,login.microsoftonline.com,DIRECT           # 补救被下面WIN-SPY 和 WIN-EXTRA规则
-  - DOMAIN-SUFFIX,edge.microsoft.com,Microsoft
+  - DOMAIN-SUFFIX,microsoft.com,Microsoft
   - DOMAIN-SUFFIX,login.live.com,Microsoft
   - DOMAIN-SUFFIX,store-images.s-microsoft.com,Microsoft
   - DOMAIN,time.windows.com,DIRECT
