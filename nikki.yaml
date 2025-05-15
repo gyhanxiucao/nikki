@@ -348,10 +348,7 @@ rules:
   - RULE-SET,adblock_class,⛔ 广告拦截
      
   # 优先DIRECT/代理
-  - DOMAIN-SUFFIX,yangyangshu.top,DIRECT
   - DOMAIN,cp.cloudflare.com,DIRECT
-  - DOMAIN-SUFFIX,gh-proxy.com,DIRECT
-  - DOMAIN-SUFFIX,sourceforge.net,DIRECT
   - RULE-SET,openwrt,🍀 Openwrt
   - RULE-SET,directlite,DIRECT
   - RULE-SET,private,DIRECT
