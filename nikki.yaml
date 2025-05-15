@@ -52,6 +52,7 @@ proxy-providers:
   2-NoMoreWalls:  # 订阅名称
     <<: *pp
     url: "https://gh-proxy.com/https://raw.githubusercontent.com/peasoft/NoMoreWalls/refs/heads/master/snippets/nodes.meta.yml"
+    # url: "https://gh-proxy.com/https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/v2"
     path: ./proxy_providers/MoreWalls.yaml
     filter: '^(?!.*(@|Hysteria|openai|1x|\b[0-3]\.[0-9]MB\/s\b|🇨🇳|speednode|🌀|套餐|中国|移动|电信|联通|广东|深圳|浙江|上海|CN|China|CHN)).*$'
     #filter: '^(?!.*(@|1x|Hysteria|\b[0-3]\.[0-9]MB\/s\b|_speednode_00[0-5]\d|(CN|US|JP|CH|GB)_speednode|🌀|🇨🇳|套餐|中国|移动|电信|联通|广东|深圳|浙江|上海|CN|China|CHN)).*$'
