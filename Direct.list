@@ -2,6 +2,9 @@
 
 # MyList
 # 域名后缀匹配
+DOMAIN-SUFFIX,smtp
+DOMAIN-SUFFIX,local
+DOMAIN-SUFFIX,arpa
 DOMAIN-SUFFIX,time.windows.com
 DOMAIN-SUFFIX,lanzov.com
 DOMAIN-SUFFIX,msftcomecttest.com
@@ -27,10 +30,13 @@ OMAIN-SUFFIX,jsdelivr.us
 OMAIN-SUFFIX,jsdelivr.net
 DOMAIN-SUFFIX,yangyangshu.top
 DOMAIN-SUFFIX,gh-proxy.com
-
+DOMAIN-SUFFIX,cn
 
 
 # 域名关键字匹配
+DOMAIN-KEYWORD,announce
+DOMAIN-KEYWORD,torrent
+DOMAIN-KEYWORD,tracker
 DOMAIN-KEYWORD,mirror
 DOMAIN-KEYWORD,ghp
 DOMAIN-KEYWORD,fastgit
