@@ -1,0 +1,472 @@
+    
+# 节点订阅参数定义及示例
+
+  # path: ./proxy_providers/provider1.yaml # 可选，文件路径，不可重复，不填写时会使用 url 的 MD5 作为此文件的文件名.
+                                             # 此路径将限制只允许在 HomeDir(有启动参数 -d 配置) 中
+                                             # 如果想存储到任意位置配置环境变量 SKIP_SAFE_PATH_CHECK=1
+  # proxy:                                 # 经过指定代理进行下载/更新
+  # header                                 # 自定义 http 请求头
+  # health-check                           # 健康检查
+    # max-failures: 4                        # 单个节点最大失败（连接超时、返回错误状态码等）次数，默认5
+                                               # 单个节点连续N次失败后节点被标记为不可用（即从可用节点列表中移除）
+                                               # 当节点被标记为不可用后，Clash 会定期重新测试该节点的健康状态
+                                               # 如果节点的健康检查成功，计数会重置，节点会重新变为可用
+    # persistent: false/true                   # 是否保留失败节点，
+                                                 # 为true时，即使节点失败（max-failures 或 max-failed-times 触发），节点仍保留在列表中，直到超过指定的时间间隔或健康检查成功为止
+                                                 # 适用于​​必须保留的节点​​（如手动添加的备用节点或付费订阅的核心节点） 
+    # filter: "avg-rtt<600 && loss<1.0"      # 迟延小于**毫秒且丢包率小于**的节点才存活
+    # lazy: false/true                       # 懒惰状态，默认为true,不使用该集合节点时，不进行测试
+  # filter: "(?i)港|SG"                   # 筛选满足关键词或正则表达式的节点，可以使用 ` 区分多个正则表达式
+  # exclude-filter: "美|日"               # 排除满足关键词或正则表达式的节点，可以使用 ` 区分多个正则表达式
+  # xclude-type: "Shadowsocks|Http"       # 根据节点类型排除，仅排除引入节点，不支持正则表达式，通过 | 分割 
+
+
+# 节点订阅锚点
+providers-anchor:
+  pp: &pp 
+    type: http
+    interval: 3600
+    health-check:
+      enable: true
+      #url: "https://www.gstatic.com/generate_204"
+      url: "https://cp.cloudflare.com/generate_204"
+      interval: 300
+      timeout: 2000
+      lazy: false
+      persistent: false
+      proxy: 直连
+    header:
+      User-Agent: ["Clash.Meta"]
+    proxy: 直连      
+                                            
+# 节点订阅
+proxy-providers:
+  1-SSRDOG:  # 订阅名称，可自定义
+    <<: *pp
+    url: "https://no8-svip.urlapi-dodo.site/s?t=cfdcfa6e3d57842d1487abd1cd49d408"
+    path: ./proxy_providers/SSRDOG.yaml
+    exclude-filter: "GB|Date|Traffic"
+  
+  2-NoMoreWalls:
+    <<: *pp
+    url: "https://gh-proxy.com/https://raw.githubusercontent.com/peasoft/NoMoreWalls/refs/heads/master/snippets/nodes.meta.yml"
+    path: ./proxy_providers/MoreWalls.yaml
+    filter: '^(?!.*(@|Hysteria|openai|1x|\b[0-3]\.[0-9]MB\/s\b|🇨🇳|speednode|🌀|套餐|中国|移动|电信|联通|广东|深圳|浙江|上海|CN|China|CHN)).*$'
+    #filter: '^(?!.*(@|1x|Hysteria|\b[0-3]\.[0-9]MB\/s\b|_speednode_00[0-5]\d|(CN|US|JP|CH|GB)_speednode|🌀|🇨🇳|套餐|中国|移动|电信|联通|广东|深圳|浙江|上海|CN|China|CHN)).*$'
+
+   
+# 节点
+proxies:
+  - {name: 拒绝, type: reject}                           # type字段的值须用小写，下同。
+  - {name: 直连, type: direct, ip-version: ipv4}
+    # ip-version:     # 可选：dual/ipv4/ipv6/ipv4-prefer/ipv6-prefer ,默认使用 dual
+      # dual  双栈
+      # ipv4: 仅使用 IPv4
+      # ipv6: 仅使用 IPv6
+      # ipv4-prefer: 优先使用 IPv4，对于 TCP 会进行双栈解析，并发链接但是优先使用 IPv4 链接，UDP 则为双栈解析，获取结果中的第一个 IPv4
+      # ipv6-prefer: 优先使用 IPv6，对于 TCP 会进行双栈解析，并发链接但是优先使用 IPv6 链接，UDP 则为双栈解析，获取结果中的第一个 IPv6
+
+  
+# 全局配置
+# nikki插件配置设置，勾选 禁用安全路径检查、禁用回环检测、禁用 quic-go 的通用分段卸载，google网站打开缓慢与此有关
+port: 7890
+socks-port: 7891
+redir-port: 7892
+mixed-port: 7893
+tproxy-port: 7894
+allow-lan: true
+bind-address: "*"
+ipv6: true
+tcp-concurrent: true
+unified-delay: true      # 统一延迟
+log-level: warning
+find-process-mode: 'off'
+# interface-name: en0
+global-client-fingerprint: chrome
+keep-alive-idle: 600
+keep-alive-interval: 15
+disable-keep-alive: false
+profile:
+  store-selected: true  # 储存 API 对策略组的选择，以供下次启动时使用
+  store-fake-ip: true   # 储存 fakeip 映射表，域名再次发生连接时，使用原有映射地址
+global-ua: clash.meta   # 外部资源下载时使用的的 UA，默认为 clash.meta
+mode: rule              # 运行模式：可选rule/global/direct，rule为默认模式。
+
+# 控制面板
+external-controller: 0.0.0.0:9090
+secret: ""
+external-ui: "/etc/nikki/run/ui"
+external-ui-name: zashboard
+external-ui-url: "https://gh-proxy.com/https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages.zip"
+
+# 嗅探
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  force-domain:
+    - "+.v2ex.com"
+  skip-domain:
+    - "+.baidu.com"
+
+
+# GEO 数据
+geodata-mode: false       # geoip 使用的文件：mmdb 或者 dat，可选 true/false, true为 dat，默认值 false
+geodata-loader: standard  # 加载模式:standard-标准加载器,memconservative-专为内存受限 (小内存) 设备优化的加载器 (默认值)
+geo-auto-update: true     # 自动更新
+geo-update-interval: 24   # 自动更新间隔时间，单位小时
+geox-url:
+  geoip: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.dat"
+  geosite: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat"
+  mmdb: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb"
+  asn: "https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb"
+  
+# 入站  
+tun:
+  enable: true
+  stack: mixed    # 可选：system/gvisor/mixed
+  dns-hijack: ["any:53", "tcp://any:53"]
+  auto-route: true
+  auto-redirect: true
+  auto-detect-interface: true
+
+
+# DNS模块
+dns:
+  
+  enable: true
+  listen: '[::]:1053'  # 同时处理IPv6和IPv4
+  ipv6: true           # 在系统的DHCP设置里，添加DNS转发 127.0.0.1#1053，可以解决alist-阿里云盘IPV6解析错误无法联网等一些奇怪的网络问题。
+  respect-rules: true  # nameserver、fallback和nameserver-policy向dns服务器的连接过程是否遵守遵守rules规则
+                       # 如果为false（默认值），则这三部分的dns服务器在未特别指定的情况下会DIRECT
+                       # 如果为true，将会按照rules的规则匹配链接方式（走代理或DIRECT），如果有特别指定则任然以指定值为准
+                       # 仅当proxy-server-nameserver非空时可以开启此选项, 强烈不建议和prefer-h3一起使用
+                       # 设置为ture，可以解决google等有关网站和应用打开缓慢的问题
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter-mode: blacklist
+  fake-ip-filter:      # 这个列表仅添加需要直连的域名
+                       # 对于被墙的等需要代理的域名，如googleapis.com添加后，谷歌应用商店等需要登录的应用将无法联网。
+    - "*.lan"
+    - "+.local"
+    - "::1/128"
+    - "fe80::/10"
+    - "geosite:connectivity-check"        # 连通性检查域名
+    - "rule-set:private,directlite,cn"    # rule-providers 中的规则订阅
+    #- "geosite:fakeip-filter"             # fakeip-filter 为 geosite 中名为 fakeip-filter 的分类（需要自行保证该分类存在） 
+    - "+.services.googleapis.cn"
+    - "+.xn--ngstr-lra8j.com"
+    - "time.*.com"
+    - "+.pool.ntp.org"
+    - "+.ntp.ntsc.ac.cn"
+    - "+.cn.ntp.org.cn"
+    - "time.windows.com"
+    - "+.openapi.alipan.com"
+    - "+.aliyundrive.com"
+    - "+.drive.quark.cn"
+    - "+.pan.baidu.com"
+    - "+.cloud.189.cn"
+    - "+.pc.woozooo.com"
+    - "+.mi.com"
+    - "+.xiaomi.com"
+    - "+.qq.com"
+  
+  # 支持的DNS类型
+    # UDP      223.5.5.5, udp://223.5.5.5
+    # TCP      tcp://8.8.8.8
+    # TLS      tls://1.1.1.1                # DoT
+    # HTTPS    https://doh.pub/dns-query    # DoH
+    # QUIC     quic://dns.adguard.com:784   # DoQ
+    # system   system://, system            # 使用系统DNS服务器
+    # rcode    返回查询状态码： 
+                 # - rcode://success              No error                查询成功
+                 # - rcode://format_error         Format error            查询格式错误
+                 # - rcode://server_failure       Server failure          DNS 服务器内部错误
+                 # - rcode://name_error           Non-existent domain     域名不存在
+                 # - rcode://not_implemented      Not implemented         功能未实现
+                 # - rcode://refused              Query refused           查询被拒绝
+    
+  default-nameserver: [223.5.5.5, 119.29.29.29, 2400:3200::1]             # 解析其他域名形式的DNS服务器,只能使用纯 IP 地址，可使用加密 DNS
+  proxy-server-nameserver: [https://dns.alidns.com/dns-query, 223.5.5.5]  # 节点域名的DNS服务器，不填则遵循nameserver-policy、nameserver和fallback的配置  
+  direct-nameserver: [https://dns.alidns.com/dns-query, https://doh.pub/dns-query]  # 不填则遵循nameserver-policy、nameserver和fallback的配置        
+  direct-nameserver-follow-policy: true           # 是否遵循nameserver-policy，默认为不遵守，仅当direct-nameserver不为空时生效
+  nameserver-policy:
+    '+.openapi.alipan.com,+.drive.quark.cn,+.189.cn,+.pc.woozooo.com': [https://dns.alidns.com/dns-query, https://doh.pub/dns-query] 
+    "rule-set:cn,private,directlite": [https://dns.alidns.com/dns-query, https://doh.pub/dns-query]  # behavior 必须为 domain/classical，当为 classical 时仅会生效域名类规则
+    "rule-set:gfw,geolocation-!cn,proxylite": [tls://cloudflare-dns.com:853, tls://dns.google:853] 
+    "rule-set:adblock": rcode://success
+  nameserver: [https://dns.alidns.com/dns-query, tls://dns.google:853]    # 主要 DNS 配置，影响所有DIRECT，确保使用对大陆解析精准的 DNS 
+  # fallback: [tls://dns.google:853, tls://cloudflare-dns.com:853]          # nameserver 和 fallback 并发查询。使用境外 DNS, 保证结果可信
+  # fallback-filter: { geoip: true, geoip-code: CN, geosite: [gfw], ipcidr: [240.0.0.0/4], domain: ['+.google.com', '+.youtube.com'] }
+  
+      # geoip: true         # 是否启用 geoip 判断
+      # geoip-code: CN      # geoip-code 配置的国家IP，直接采用nameserver的查询结果
+      # geosite:            # 优先于 IP 判断，匹配到 geosite 库的分类（如gfw） 的域名，将只使用 fallback解析
+      # ipcidr:             # 自定义IP段（IP/掩码），这些网段的结果会被视为污染，nameserver解析出这些结果时将会采用 fallback的解析结果
+      # domain:             # 这些域名被视为已污染，匹配到这些域名，会直接使用 fallback解析，不去使用 nameserver
+      
+   
+ 
+
+# 出站代理策略
+
+  # 内置代理策略：
+    # DIRECT-直连
+    # REJECT-拒绝
+    # REJECT-DROP-抛弃
+    # PASS-绕过，匹配规则时跳过此规则
+    # COMPATIBLE-兼容，在策略组筛选不出节点时出现，等效 DIRECT
+  
+  
+  # 参数定义及示例
+    # name:策略组的名字                             # 必须，如有特殊符号，应当使用引号将其包裹
+    # type：select/url-test/fallback/ load-balance  # 策略组的类型。load-balance为负载均衡
+    # proxies: [节点, 策略组]                       # 引入节点、策略组
+    # include-all: true                             # 引入所有节点和节点订阅，顺序将按照名称排序。
+    # include-all-proxies: true                     # 引入所有节点，顺序将按照名称排序。
+    # use: [节点订阅1,节点订阅2]                    # 引入指定节点订阅
+    # include-all-providers: true                   # 引入所有节点订阅，顺序将按照名称排序。会使“use”失效
+    # url: "健康检查测试地址"                       ##只会检查代理组 proxies 字段的代理，代理集合（proxy-providers）的代理（通过 use 引入的）
+    # timeout: 5000                                 # 测速超时时间，单位毫秒
+    # max-failed-times: 5                           # 最大失败次数，超过则触发一次强制健康检查，默认 5
+    # lazy: false                                   # 懒惰状态，默认为true,未选择到当前策略组时，不进行测试。
+    # tolerance: 50                                 # 节点切换容差，单位 ms
+    # filter: "(?i)港|hk|hongkong|hong kong"        # 筛选满足关键词或正则表达式的节点，可以使用 ` 区分多个正则表达式
+    # exclude-filter: "美|日"                       # 排除满足关键词或正则表达式的节点，可以使用 ` 区分多个正则表达式
+    # exclude-type: "Shadowsocks|Http"              # 排出指定类型的节点，不支持正则表达式，通过 | 分割
+    # disable-udp: true                             # 在该组禁用UDP
+
+proxy-anchor:    # 策略组锚点
+  rg: &rg [🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇩🇪 德国, 🇷🇺 俄罗斯, 其他地区]
+  pd: &pd {type: select, proxies: [🚀 默认选择, 🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇩🇪 德国, 🇷🇺 俄罗斯, 其他地区, 直连]}
+  dp: &dp {type: select, proxies: [直连, 🚀 默认选择, 🇭🇰 香港, 🇹🇼 台湾, 🇸🇬 新加坡, 🇺🇸 美国, 🇯🇵 日本, 🇰🇷 韩国, 🇩🇪 德国, 🇷🇺 俄罗斯, 其他地区]}
+  AI: &AI {type: select, proxies: [🇺🇸 美国, 🇸🇬 新加坡, 🇯🇵 日本, 🇰🇷 韩国, 🇩🇪 德国, 🇷🇺 俄罗斯, 🇭🇰 香港, 🇹🇼 台湾, 其他地区]}
+  ut: &ut {type: url-test, include-all-providers: true, interval: 600, tolerance: 50, lazy: false, exclude-filter: "直连|拒绝|到期|过期|维护|下线|测试"}
+  fb: &fb {type: fallback, proxies: *rg, interval: 300, tolerance: 50, lazy: false, exclude-filter: "直连|拒绝|到期|过期|维护|下线|测试"}
+  # lb: &lb {type: load-balance, proxies: [节点1, 策略组1], url: 'https://www.gstatic.com/generate_204', interval: 300, lazy: false, strategy: consistent-hashing}      
+      # strategy:  # 负载均衡策略
+        # round-robin 将会把所有的请求分配给策略组内不同的代理节点
+        # consistent-hashing 将相同的 目标地址 的请求分配给策略组内的同一个代理节点,目标地址 为域名时，使用顶级域名匹配
+        # sticky-sessions:   将相同的 来源地址 和 目标地址 的请求分配给策略组内的同一个代理节点，缓存 10 分钟过期  
+
+proxy-groups:
+  
+  # 基础组
+  - {name: 🚀 默认选择, type: select, proxies: [♻ 故障转移, 🔰 迟延最低, 直连]}
+  - {name: 🐟 漏网之鱼, <<: *pd}
+  - {name: ♻ 故障转移, <<: *fb}
+  - {name: 🔰 迟延最低, <<: *ut}
+  #- {name: 🔰 负载均衡, <<: *lb}
+  - {name: 🚨 病毒网站, type: select, proxies: [拒绝, 🚀 默认选择, 直连]}
+  - {name: ⛔ 广告拦截, type: select, proxies: [REJECT-DROP, 拒绝, 🚀 默认选择]}
+  
+  # 服务组
+    # 图标远程地址：https://raw.githubusercontent.com/Vbaethon/HOMOMIX/main/Icon/Color/Large/                    
+  - {name: Microsoft, <<: *pd, icon: "http://192.168.100.1/Backup/icons/Large/Microsoft.png"}
+  - {name: Win-Update, type: select, proxies: [拒绝, 🚀 默认选择, 直连], icon: "http://192.168.100.1/Backup/icons/Large/Microsoft.png"}
+  - {name: Openwrt, <<: *dp, icon: "http://192.168.100.1/Backup/icons/Large/Niche_Link.png"}
+  - {name: Speedtest, <<: *dp, icon: "http://192.168.100.1/Backup/icons/Large/SpeedTest.png"}
+  - {name: AI, <<: *AI, icon: "http://192.168.100.1/Backup/icons/Large/ChatGPT.png"}
+  - {name: Apple, <<: *pd, icon: "http://192.168.100.1/Backup/icons/Large/Apple_rainbow.png"}  
+  - {name: Google, <<: *pd, icon: "http://192.168.100.1/Backup/icons/Large/Google.png"}
+  - {name: YouTube, <<: *pd, icon: "http://192.168.100.1/Backup/icons/Large/YouTube.png"}
+  - {name: GitHub, <<: *pd, icon: "http://192.168.100.1/Backup/icons/Large/GitHub.png"}
+  - {name: TikTok, <<: *pd, icon: "http://192.168.100.1/Backup/icons/Large/TikTok.png"}
+  - {name: 哔哩哔哩, <<: *pd, icon: "http://192.168.100.1/Backup/icons/Large/Bilibili_Global.png"}
+  - {name: Telegram, <<: *pd, icon: "http://192.168.100.1/Backup/icons/Large/Telegram.png"}
+  - {name: NETFLIX, <<: *pd, icon: "http://192.168.100.1/Backup/icons/Large/Netflix.png"}
+    
+  # 地区组
+  - {name: 🇭🇰 香港, <<: *ut, filter: '(?i)🇭🇰|港|HK|Hong\s*Kong'}
+  - {name: 🇹🇼 台湾, <<: *ut, filter: '(?i)🇹🇼|台|TW|Taiwan'}
+  - {name: 🇸🇬 新加坡, <<: *ut, filter: '(?i)🇸🇬|新|狮城|SG|Singapore'}
+  - {name: 🇺🇸 美国, <<: *ut, filter: '(?i)🇺🇸|美|US|U.S.|United States|America'}
+  - {name: 🇯🇵 日本, <<: *ut, filter: '(?i)🇯🇵|日|JP|japan'}
+  - {name: 🇰🇷 韩国, <<: *ut, filter: '(?i)🇰🇷|韩|KR|Korea'}
+  - {name: 🇩🇪 德国, <<: *ut, filter: '(?i)^(?=.*(🇩🇪|德|DE|Germany))(?!.*(?<!DE)_speednode).*$'}
+  - {name: 🇷🇺 俄罗斯, <<: *ut, filter: '(?i)🇷🇺|俄|RU|Russia'}
+  - name: 其他地区
+    type: url-test
+    <<: *ut
+    exclude-filter: "(?i)🇭🇰|港|Hong|🇹🇼|台|TW|Taiwan|🇸🇬|新|SG|Singapore|狮城|🇺🇸|美|US|U.S.|United|America|🇯🇵|日|JP|japan|🇰🇷|韩|KR|Korea|🇷🇺|俄|RU|Russia|🇩🇪|德|DE|Germany"
+    icon: "http://192.168.100.1/Backup/icons/Large/Network.png"
+    
+
+  
+# 规则匹配
+  ## 规则说明：
+  # DOMAIN               匹配完整域名
+  # DOMAIN-SUFFIX        匹配域名后缀
+  # DOMAIN-KEYWORD       域名关键字匹配
+  # DOMAIN-REGEX         域名正则表达式匹配
+  # GEOSITE              匹配GEOSITE内的域名
+  # IP-CIDR & IP-CIDR6   匹配 IP 地址范围，IP-CIDR和IP-CIDR6效果是一样的，IP-CIDR6只是一个别名
+  # IP-SUFFIX            匹配 IP 后缀范围
+  # IP-ASN               匹配 IP 所属 ASN
+  # GEOIP                匹配 IP 所属国家代码
+  # SRC-GEOIP            匹配来源 IP 所属国家代码
+  # SRC-IP-ASN           匹配来源 IP 所属 ASN
+  # SRC-IP-CIDR          匹配来源 IP 地址范围
+  # SRC-IP-SUFFIX        匹配来源 IP 后缀范围
+  # DST-PORT             匹配请求目标端口范围
+  # SRC-PORT             匹配请求来源端口范围
+  # PROCESS-NAME         使用进程匹配，在Android平台可以匹配包名
+  # RULE-SET             引用规则集合，需配置rule-providers
+  # SUB-RULE             匹配至子规则,需要注意括号的使用
+  # MATCH                匹配所有请求，无需条件
+  # 附件参数：
+    # no-resolve  # 仅支持 目标IP 规则添加。
+                  # no-resolve对纯IP请求无影响，添加与否，都会直接规则直连或者代理。
+                  # 对于域名请求：
+                    # 如果匹配到域名规则：直连，触发DNS解析（使用 direct-nameserver 重新解析）；代理，发送域名给代理；
+                    # 如果未匹配到域名规则，继续向后匹配IP规则（使用 nameserver 查询）：
+                      # 对于未添no-resolve的IP规则：直连，触发 DNS 解析（如果之前未解析，使用 direct-nameserver 重新解析）；代理，发送域名给代理。
+                      # 对于添加了no-resolve的IP规则，则不会触发DNS解析，并跳过该规则的匹配，继续向后匹配。
+                      # 如果之前已因其他规则触发过 DNS 解析（如前面的 GEOIP 或非 no-resolve 的 IP-CIDR），则仍会用已解析的 IP 匹配这些带 no-resolve 的规则。  
+    # src         仅支持关于 目标IP 的规则，将 目标IP 匹配转为 来源IP 匹配
+  # 通配符
+    # *   # 一次只能匹配一级域名，*.baidu.com 只匹配 tieba.baidu.com 而不匹配 123.tieba.baidu.com 或者 baidu.com
+    # ＋  # 只能用于域名前缀匹配，可以一次性匹配多个级别，＋.baidu.com 匹配 tieba.baidu.com 和 123.tieba.baidu.com 或者 baidu.com
+    # .   # 只能用于域名前缀匹配，可以一次性匹配多个级别，.baidu.com 匹配 tieba.baidu.com 和 123.tieba.baidu.com, 但不能匹配 baidu.com
+    # 使用通配符时，应当使用引号 ' '或 " "将内容包裹起来
+  
+rules: 
+  # 规则的顺序：先域名后IP,先小众后大类。
+  # 如果在域名规则之前存在不带 no-resolve 的 IP 规则，则会触发 DNS 查询。这不仅浪费时间，根据不同的配置也可能出现 DNS 泄漏甚至分流错误。
+  # 某些 classical 规则里也会有 IP 规则，会触发不必要的DNS解析。
+  # 关于GeoSite： 底层是一系列小规则，这些小规则又组成更大的规则，最终汇总到几个大分组上，因此可以通过指定不同的分组来实现灵活的分流。
+  # GeoSite属性过过滤：GeoSite 支持 @attr（@前是所在的组，@后是需要过滤出来使用的部分） 来进一步筛选分组中的规则。例如：
+    # steam@cn   从steam过滤出国内直连的 steam 域名
+    # jd@!cn     从jd中过滤出 jd 的国际域名
+  # 查询域名在geoside中的属性：geoview -type geosite -input /etc/****/GeoSite.dat -action lookup -value 要查询的域名，例如：
+                               # geoview -type geosite -input /etc/nikki/run/GeoSite.dat -action lookup -value alibaba.cdn.steampipe.steamcontent.com
+                               # 需要安装geoview工具包                               
+  
+  # 病毒网站
+  - RULE-SET,virus_website,🚨 病毒网站
+  
+  # 拦截例外
+  - DOMAIN-REGEX,outlook.office.*.com,直连                 # 补救被下面WIN-SPY 和 WIN-EXTRA规则误杀的情形
+  - DOMAIN-SUFFIX,login.microsoftonline.com,直连           # 补救被下面WIN-SPY 和 WIN-EXTRA规则
+  - DOMAIN-SUFFIX,microsoft.com,Microsoft
+  - DOMAIN-SUFFIX,login.live.com,Microsoft
+  - DOMAIN-SUFFIX,store-images.s-microsoft.com,Microsoft
+  - DOMAIN,time.windows.com,直连
+
+  # 广告/隐私拦截
+  - DOMAIN-REGEX,947.fr,REJECT-DROP
+  - DOMAIN-REGEX,993993.com,REJECT-DROP
+  - RULE-SET,win-spy,拒绝                                  # WIN-SPY 和 WIN-EXTRA 是 Windows 的附加的隐私跟踪域名
+  - RULE-SET,win-extra,拒绝
+  - DOMAIN-SUFFIX,telemetry.microsoft.com,拒绝             # 拦截微软遥测
+  - DOMAIN-SUFFIX,doubleclick.net,拒绝                     # Google广告
+  - DOMAIN-REGEX,(?i)(ads|track|analytics),REJECT-DROP      # 拦截包含 track/analytics 恶意特征的域名
+  - DOMAIN,e.crashlytics.com,⛔ 广告拦截                   # 拦截一切崩溃数据统计、搜集。
+  - RULE-SET,adblock,⛔ 广告拦截
+     
+  # 优先DIRECT/代理
+  - DOMAIN-REGEX,gh-proxy.com,直连
+  - DOMAIN,cp.cloudflare.com,直连
+  - DOMAIN-SUFFIX,cloudflare-dns.com,🚀 默认选择
+  - DOMAIN-SUFFIX,dns.google,🚀 默认选择
+  - RULE-SET,openwrt,Openwrt
+  - RULE-SET,directlite,直连
+  - RULE-SET,private,直连
+  - RULE-SET,proxylite,🚀 默认选择
+    
+  # 常用服务
+  - RULE-SET,apple-cn,直连
+  - RULE-SET,icloud@cn,直连
+  - RULE-SET,apple@cn,直连
+  - RULE-SET,apple,Apple
+  - RULE-SET,ai,AI
+  - RULE-SET,github,GitHub
+  - RULE-SET,youtube,YouTube
+  - RULE-SET,google,Google
+  - RULE-SET,microsoft@cn,直连
+  - RULE-SET,win-update,Win-Update
+  - RULE-SET,onedrive,Microsoft
+  - RULE-SET,microsoft,Microsoft
+  - RULE-SET,tiktok,TikTok
+  - RULE-SET,speedtest,Speedtest
+  - RULE-SET,telegram,Telegram
+  - RULE-SET,netflix,NETFLIX
+  
+  # 域名规则集
+  - RULE-SET,gfw,🚀 默认选择
+  - GEOSITE,geolocation-!cn@cn,直连
+  #- RULE-SET,geolocation-!cn,🚀 默认选择
+  - RULE-SET,cn,直连
+    
+  # IP规则集
+  - IP-CIDR,192.168.0.0/16,直连,no-resolve
+  - IP-CIDR,10.0.0.0/8,直连,no-resolve
+  - IP-CIDR,172.16.0.0/12,直连,no-resolve
+  - IP-CIDR,127.0.0.0/8,直连,no-resolve
+  - IP-CIDR,100.64.0.0/10,直连,no-resolve
+  - RULE-SET,google_ip,Google,no-resolve
+  - RULE-SET,netflix_ip,NETFLIX,no-resolve
+  - RULE-SET,telegram_ip,Telegram,no-resolve
+  - RULE-SET,ad_ip,⛔ 广告拦截,no-resolve
+  - RULE-SET,private_ip,直连,no-resolve
+  - RULE-SET,cn_ip,直连                        # 添加no-resolve参数后，如果MATCH规则默认代理，会导致未被cn域名库覆盖的小众国内域名走代理
+
+  # 兜底规则
+  - MATCH,🐟 漏网之鱼                          # 默认直连，未被前面的规则覆盖的被墙的域名将无法正常访问网络
+
+
+# 规则集
+rule-anchor:
+  ip: &ip {type: http, interval: 86400, startup-update: true, behavior: ipcidr, format: mrs}
+  domain: &domain {type: http, interval: 86400, startup-update: true, behavior: domain, format: mrs}
+  class: &class {type: http, interval: 86400, startup-update: true, behavior: classical, format: text}
+  classical: &classical {type: http, interval: 86400, startup-update: true, behavior: classical, format: yaml}
+rule-providers: 
+  # 域名规则集
+    # 远程地址：https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/
+    # 远程地址：https://raw.githubusercontent.com/gyhanxiucao/nikki/refs/heads/main/
+  private: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/private.mrs"}
+  proxylite: { <<: *class, url: "http://192.168.100.1/Backup/Nikki_Config/ProxyLite.list"}
+  directlite: { <<: *class, url: "http://192.168.100.1/Backup/Nikki_Config/Direct.list"}
+  virus_website: { <<: *class, url: "http://192.168.100.1/Backup/Nikki_Config/Virus_Website.list"}
+  adblock: {  <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/category-ads-all.mrs"}
+  Allowlist: { <<: *class, url: "http://192.168.100.1/Backup/Nikki_Config/Allowlist.list"}
+  region: { <<: *classical, url: "https://gh-proxy.com/https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/snippets/region.yml"}
+  ai: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/category-ai-!cn.mrs"}
+  openwrt: { <<: *class, url: "http://192.168.100.1/Backup/Nikki_Config/openwrt.list"}
+  youtube: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/youtube.mrs"}
+  google: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/google.mrs"}
+  github: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/github.mrs"}
+  telegram: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/telegram.mrs"}
+  netflix: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/netflix.mrs"}
+  paypal: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/paypal.mrs"}
+  onedrive: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/onedrive.mrs"}
+  microsoft@cn: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/microsoft@cn.mrs"}
+  microsoft: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/microsoft.mrs"} 
+  win-update: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/win-update.mrs"}
+  win-spy: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/win-spy.mrs"}
+  win-extra: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/win-extra.mrs"}
+  icloud@cn: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/icloud@cn.mrs"}
+  apple@cn: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/apple@cn.mrs"}
+  apple-cn: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/apple-cn.mrs"}
+  apple: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/apple.mrs"}
+  speedtest: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/ookla-speedtest.mrs"}
+  tiktok: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/tiktok.mrs"}
+  gfw: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/gfw.mrs"}
+  geolocation-!cn: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/geolocation-!cn.mrs"}
+  cn: { <<: *domain, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geosite/cn.mrs"}
+    # cn 相当于 geolocation-cn 和 tld-cn 的合集
+  
+  # IP规则集
+  ad_ip: { <<: *ip, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geoip/ad.mrs"}
+  private_ip: { <<: *ip, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geoip/private.mrs"}
+  cn_ip: { <<: *ip, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geoip/cn.mrs"}
+  google_ip: { <<: *ip, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geoip/google.mrs"}
+  telegram_ip: { <<: *ip, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geoip/telegram.mrs"}
+  netflix_ip: { <<: *ip, url: "http://192.168.100.1/Backup/meta-rules-dat/geo/geoip/netflix.mrs"}
