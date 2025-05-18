@@ -58,7 +58,7 @@ proxy-providers:
 # 节点
 proxies:
   - {name: 拒绝, type: reject}                           # type字段的值须用小写，下同。
-  - {name: 直连, type: direct, ip-version: ipv4-prefer}
+  - {name: 直连, type: direct, ip-version: ipv4}
     # ip-version:     # 可选：dual/ipv4/ipv6/ipv4-prefer/ipv6-prefer ,默认使用 dual
       # dual  双栈
       # ipv4: 仅使用 IPv4
@@ -117,7 +117,7 @@ sniffer:
 
 
 # GEO 数据
-geodata-mode: false       #geoip 使用文件，mmdb 或者 dat，可选 true/false,true为 dat，此项有默认值 false
+geodata-mode: false       # geoip 使用的文件：mmdb 或者 dat，可选 true/false, true为 dat，默认值 false
 geodata-loader: standard  # 加载模式:standard-标准加载器,memconservative-专为内存受限 (小内存) 设备优化的加载器 (默认值)
 geo-auto-update: true     # 自动更新
 geo-update-interval: 24   # 自动更新间隔时间，单位小时
@@ -157,7 +157,7 @@ dns:
     - "+.local"
     - "::1/128"
     - "fe80::/10"
-    - "rule-set:private,directlite,cn"  # rule-providers 中的规则订阅
+    - "rule-set:private,directlite,cn"    # rule-providers 中的规则订阅
     #- "geosite:fakeip-filter"             # fakeip-filter 为 geosite 中名为 fakeip-filter 的分类（需要自行保证该分类存在） 
     - "+.services.googleapis.cn"
     - "+.xn--ngstr-lra8j.com"
@@ -199,10 +199,10 @@ dns:
     '+.openapi.alipan.com,+.drive.quark.cn,+.189.cn,+.pc.woozooo.com': [https://dns.alidns.com/dns-query, https://doh.pub/dns-query] 
     "rule-set:cn,private,directlite": [https://dns.alidns.com/dns-query, https://doh.pub/dns-query]  # behavior 必须为 domain/classical，当为 classical 时仅会生效域名类规则
     "rule-set:geolocation-!cn,proxylite": [tls://dns.google:853, tls://cloudflare-dns.com:853] 
-    "geosite:category-ads-all": rcode://success
+    "rule-set:adblock,adblock_class": rcode://success
   nameserver: [https://dns.alidns.com/dns-query, tls://dns.google:853]    # 主要 DNS 配置，影响所有DIRECT，确保使用对大陆解析精准的 DNS 
-  fallback: [tls://dns.google:853, tls://cloudflare-dns.com:853]          # nameserver 和 fallback 并发查询。使用境外 DNS, 保证结果可信
-  fallback-filter: { geoip: true, geoip-code: CN, geosite: [gfw], ipcidr: [240.0.0.0/4], domain: ['+.google.com', '+.youtube.com'] }
+  # fallback: [tls://dns.google:853, tls://cloudflare-dns.com:853]          # nameserver 和 fallback 并发查询。使用境外 DNS, 保证结果可信
+  # fallback-filter: { geoip: true, geoip-code: CN, geosite: [gfw], ipcidr: [240.0.0.0/4], domain: ['+.google.com', '+.youtube.com'] }
   
       # geoip: true         # 是否启用 geoip 判断
       # geoip-code: CN      # geoip-code 配置的国家IP，直接采用nameserver的查询结果
@@ -257,7 +257,7 @@ proxy-groups:
   
   # 基础组
   - {name: 🚀 默认选择, type: select, proxies: [♻ 故障转移, 🔰 迟延最低, 直连]}
-  - {name: 🐟 漏网之鱼, <<: *pd}  # 在代理稳定可靠的条件下，可以默认代理。否则，未被规则覆盖的域名将无法联网
+  - {name: 🐟 漏网之鱼, <<: *pd}
   - {name: ♻ 故障转移, <<: *fb}
   - {name: 🔰 迟延最低, <<: *ut}
   #- {name: 🔰 负载均衡, <<: *lb}
@@ -265,7 +265,7 @@ proxy-groups:
   - {name: ⛔ 广告拦截, type: select, proxies: [REJECT-DROP, 拒绝, 🚀 默认选择]}
   
   # 服务组
-    # 图标远程地址：https://raw.githubusercontent.com/Vbaethon/HOMOMIX/main/Icon/Color/Large/
+    # 图标远程地址：https://raw.githubusercontent.com/Vbaethon/HOMOMIX/main/Icon/Color/Large/                    
   - {name: Microsoft, <<: *pd, icon: "http://192.168.100.1/Backup/icons/Large/Microsoft.png"}
   - {name: Win-Update, type: select, proxies: [拒绝, 🚀 默认选择, 直连], icon: "http://192.168.100.1/Backup/icons/Large/Microsoft.png"}
   - {name: Openwrt, <<: *dp, icon: "http://192.168.100.1/Backup/icons/Large/Niche_Link.png"}
@@ -348,12 +348,12 @@ rules:
   - DOMAIN,time.windows.com,直连
 
   # 广告/隐私拦截
-  - RULE-SET,win-spy,拒绝                            # WIN-SPY 和 WIN-EXTRA 是 Windows 的附加的隐私跟踪域名
+  - RULE-SET,win-spy,拒绝                                  # WIN-SPY 和 WIN-EXTRA 是 Windows 的附加的隐私跟踪域名
   - RULE-SET,win-extra,拒绝
-  - DOMAIN-SUFFIX,telemetry.microsoft.com,拒绝        # 拦截微软遥测
-  - DOMAIN-SUFFIX,doubleclick.net,拒绝                # Google广告
-  - DOMAIN-REGEX,(?i)(ad|track|analytics),REJECT-DROP   # 拦截包含 track/analytics 恶意特征的域名
-  - DOMAIN,e.crashlytics.com,⛔ 广告拦截                # 拦截一切崩溃数据统计、搜集。
+  - DOMAIN-SUFFIX,telemetry.microsoft.com,拒绝             # 拦截微软遥测
+  - DOMAIN-SUFFIX,doubleclick.net,拒绝                     # Google广告
+  - DOMAIN-REGEX,(?i)(ad|track|analytics),REJECT-DROP      # 拦截包含 track/analytics 恶意特征的域名
+  - DOMAIN,e.crashlytics.com,⛔ 广告拦截                   # 拦截一切崩溃数据统计、搜集。
   - RULE-SET,adblock,⛔ 广告拦截
   - RULE-SET,adblock_class,⛔ 广告拦截
      
@@ -397,7 +397,7 @@ rules:
   - RULE-SET,cn_ip,直连                        # 添加no-resolve参数后，如果MATCH规则默认代理，会导致未被cn域名库覆盖的小众国内域名走代理
 
   # 兜底规则
-  - MATCH,🐟 漏网之鱼                           # 默认直连，未被前面的规则覆盖的被墙的域名将无法正常访问网络
+  - MATCH,🐟 漏网之鱼                          # 默认直连，未被前面的规则覆盖的被墙的域名将无法正常访问网络
 
 
 # 规则集
