@@ -265,6 +265,7 @@ proxy-groups:
   - {name: ⛔ 广告拦截, type: select, proxies: [REJECT-DROP, 拒绝, 🚀 默认选择]}
   
   # 服务组
+    # 图标远程地址：https://raw.githubusercontent.com/Vbaethon/HOMOMIX/main/Icon/Color/Large/
   - {name: Microsoft, <<: *pd, icon: "http://192.168.100.1/Backup/icons/Large/Microsoft.png"}
   - {name: Win-Update, type: select, proxies: [拒绝, 🚀 默认选择, 直连], icon: "http://192.168.100.1/Backup/icons/Large/Microsoft.png"}
   - {name: Openwrt, <<: *dp, icon: "http://192.168.100.1/Backup/icons/Large/Niche_Link.png"}
@@ -407,6 +408,8 @@ rule-anchor:
   classical: &classical {type: http, interval: 86400, startup-update: true, behavior: classical, format: yaml}
 rule-providers: 
   # 域名规则集
+    # 远程地址：https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/
+    # 远程地址：https://raw.githubusercontent.com/gyhanxiucao/nikki/refs/heads/main/
   private: { <<: *domain, url: "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"}
   proxylite: { <<: *class, url: "https://gh-proxy.com/https://raw.githubusercontent.com/gyhanxiucao/nikki/refs/heads/main/ProxyLite.list"}
   directlite: { <<: *class, url: "https://gh-proxy.com/https://raw.githubusercontent.com/gyhanxiucao/nikki/refs/heads/main/Direct.list"}
