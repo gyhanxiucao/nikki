@@ -360,6 +360,8 @@ rules:
   # 优先DIRECT/代理
   - DOMAIN-REGEX,gh-proxy.com,直连
   - DOMAIN,cp.cloudflare.com,直连
+  - DOMAIN-SUFFIX,cloudflare-dns.com,🚀 默认选择
+  - DOMAIN-SUFFIX,dns.google,🚀 默认选择 
   - RULE-SET,openwrt,Openwrt
   - RULE-SET,directlite,直连
   - RULE-SET,private,直连
