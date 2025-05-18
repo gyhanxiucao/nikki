@@ -352,7 +352,7 @@ rules:
   - RULE-SET,win-extra,拒绝
   - DOMAIN-SUFFIX,telemetry.microsoft.com,拒绝             # 拦截微软遥测
   - DOMAIN-SUFFIX,doubleclick.net,拒绝                     # Google广告
-  - DOMAIN-REGEX,(?i)(ad|track|analytics),REJECT-DROP      # 拦截包含 track/analytics 恶意特征的域名
+  - DOMAIN-REGEX,(?i)(ads|track|analytics),REJECT-DROP      # 拦截包含 track/analytics 恶意特征的域名
   - DOMAIN,e.crashlytics.com,⛔ 广告拦截                   # 拦截一切崩溃数据统计、搜集。
   - RULE-SET,adblock,⛔ 广告拦截
   - RULE-SET,adblock_class,⛔ 广告拦截
