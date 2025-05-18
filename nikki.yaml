@@ -158,7 +158,7 @@ dns:
     - "::1/128"
     - "fe80::/10"
     - "rule-set:private,directlite,cn"  # rule-providers 中的规则订阅
-    - geosite:fakeip-filter             # fakeip-filter 为 geosite 中名为 fakeip-filter 的分类（需要自行保证该分类存在） 
+    #- "geosite:fakeip-filter"             # fakeip-filter 为 geosite 中名为 fakeip-filter 的分类（需要自行保证该分类存在） 
     - "+.services.googleapis.cn"
     - "+.xn--ngstr-lra8j.com"
     - "time.*.com"
