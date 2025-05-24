@@ -271,7 +271,7 @@ proxy-groups:
                            # https://github.com/Blowater998/Icon/tree/master/Color                          # http://192.168.100.1/Backup/icons/Koolson/Color/
   
   # 基础组
-  - {name: 默认选择, type: select, proxies: [故障转移, 负载均衡, 直连], icon: "http://192.168.100.1/Backup/icons/Koolson/Color/Static_1.png"}
+  - {name: 默认选择, type: select, proxies: [迟延最低, 故障转移, 负载均衡, 直连], icon: "http://192.168.100.1/Backup/icons/Koolson/Color/Static_1.png"}
   - {name: 漏网之鱼, <<: *pd, icon: "http://192.168.100.1/Backup/icons/homomix/Large/Fish.png"}
   - {name: 故障转移, <<: *fb, icon: "http://192.168.100.1/Backup/icons/Koolson/Color/Round_Robin.png"}
   - {name: 负载均衡, <<: *lb, icon: "http://192.168.100.1/Backup/icons/Koolson/Color/Available.png"}
